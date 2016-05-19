@@ -1,0 +1,36 @@
+{
+  "generator-jhipster": {
+    "jhipsterVersion": "3.3.0",
+    "baseName": "thingcare",
+    "packageName": "io.thingcare",
+    "packageFolder": "io/thingcare",
+    "serverPort": "8000",
+    "authenticationType": "uaa",
+    "hibernateCache": "no",
+    "databaseType": "mongodb",
+    "devDatabaseType": "mongodb",
+    "prodDatabaseType": "mongodb",
+    "searchEngine": "no",
+    "buildTool": "maven",
+    "jwtSecretKey": "e3dbd45eb3dc7b605ecf752e54f3ceb31dca4b3d",
+    "enableTranslation": true,
+    "applicationType": "microservice",
+    "testFrameworks": [
+      "gatling",
+      "cucumber"
+    ],
+    "jhiPrefix": "jhi",
+    "skipClient": true,
+    "skipUserManagement": true,
+    "nativeLanguage": "en",
+    "languages": [
+      "en",
+      "fr",
+      "de",
+      "pl"
+    ],
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "enableSocialSignIn": false
+  }
+}
