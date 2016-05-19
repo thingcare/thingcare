@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/thingcare/thingcare.svg?branch=master)](https://travis-ci.org/thingcare/thingcare)
 [![Code Climate](https://codeclimate.com/github/thingcare/thingcare/badges/gpa.svg)](https://codeclimate.com/github/thingcare/thingcare)
 [![Test Coverage](https://codeclimate.com/github/thingcare/thingcare/badges/coverage.svg)](https://codeclimate.com/github/thingcare/thingcare/coverage)
+[![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/thingcare/thingcare)
 
 This application was generated using JHipster, you can find documentation and help at [https://jhipster.github.io](https://jhipster.github.io).
 
