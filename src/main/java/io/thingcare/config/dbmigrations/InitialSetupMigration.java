@@ -28,7 +28,7 @@ public class InitialSetupMigration {
 
     @ChangeSet(order = "01", author = "initiator", id = "01-addAuthorities")
     public void addAuthorities(DB db) {
-        DBCollection authorityCollection = db.getCollection("jhi_authority");
+        DBCollection authorityCollection = db.getCollection("security.authority");
         authorityCollection.insert(
             BasicDBObjectBuilder.start()
                 .add("_id", "ROLE_ADMIN")
@@ -41,11 +41,10 @@ public class InitialSetupMigration {
 
     @ChangeSet(order = "02", author = "initiator", id = "02-addUsers")
     public void addUsers(DB db) {
-        DBCollection usersCollection = db.getCollection("jhi_user");
+        DBCollection usersCollection = db.getCollection("security.user");
         usersCollection.createIndex("login");
         usersCollection.createIndex("email");
         usersCollection.insert(BasicDBObjectBuilder.start()
-            .add("_id", "user-0")
             .add("login", "system")
             .add("password", "$2a$10$mE.qmcV0mFU5NcKh73TZx.z4ueI/.bDWbj0T1BYyqP481kGGarKLG")
             .add("first_name", "")
@@ -59,7 +58,6 @@ public class InitialSetupMigration {
             .get()
         );
         usersCollection.insert(BasicDBObjectBuilder.start()
-            .add("_id", "user-1")
             .add("login", "anonymousUser")
             .add("password", "$2a$10$j8S5d7Sr7.8VTOYNviDPOeWX8KcYILUVJBsYV83Y5NtECayypx9lO")
             .add("first_name", "Anonymous")
@@ -73,7 +71,6 @@ public class InitialSetupMigration {
             .get()
         );
         usersCollection.insert(BasicDBObjectBuilder.start()
-            .add("_id", "user-2")
             .add("login", "admin")
             .add("password", "$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC")
             .add("first_name", "admin")
@@ -87,7 +84,6 @@ public class InitialSetupMigration {
             .get()
         );
         usersCollection.insert(BasicDBObjectBuilder.start()
-            .add("_id", "user-3")
             .add("login", "user")
             .add("password", "$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K")
             .add("first_name", "")
