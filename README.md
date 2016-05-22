@@ -1,5 +1,6 @@
 # thingcare
 [![Build Status](https://travis-ci.org/thingcare/thingcare.svg?branch=master)](https://travis-ci.org/thingcare/thingcare)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0d31bd2c14974dbc8dbf70a4216f339f)](https://www.codacy.com/app/thingcare/thingcare/dashboard)
 [![Code Climate](https://codeclimate.com/github/thingcare/thingcare/badges/gpa.svg)](https://codeclimate.com/github/thingcare/thingcare)
 [![Test Coverage](https://codeclimate.com/github/thingcare/thingcare/badges/coverage.svg)](https://codeclimate.com/github/thingcare/thingcare/coverage)
 [![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/thingcare/thingcare)

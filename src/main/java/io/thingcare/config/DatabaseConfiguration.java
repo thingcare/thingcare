@@ -1,5 +1,6 @@
 package io.thingcare.config;
 
+import io.thingcare.config.oauth2.OAuth2AuthenticationReadConverter;
 import io.thingcare.domain.util.JSR310DateConverters.*;
 import com.mongodb.Mongo;
 import com.github.mongobee.Mongobee;
@@ -15,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -62,6 +64,7 @@ public class DatabaseConfiguration extends AbstractMongoConfiguration {
     @Bean
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
+        converters.add(new OAuth2AuthenticationReadConverter());
         converters.add(DateToZonedDateTimeConverter.INSTANCE);
         converters.add(ZonedDateTimeToDateConverter.INSTANCE);
         converters.add(DateToLocalDateConverter.INSTANCE);

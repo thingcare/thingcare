@@ -7,6 +7,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 import org.springframework.cache.support.NoOpCacheManager; 
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -31,5 +33,13 @@ public class CacheConfiguration {
         log.debug("No cache");
         cacheManager = new NoOpCacheManager();
         return cacheManager;
+    }
+
+    /**
+     * Use by Spring Security, to get events from Hazelcast.
+     */
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }

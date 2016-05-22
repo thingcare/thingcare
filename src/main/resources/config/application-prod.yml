@@ -10,17 +10,6 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-eureka:
-    instance:
-        prefer-ip-address: true
-    client:
-        enabled: true
-        healthcheck:
-            enabled: true
-        registerWithEureka: true
-        fetchRegistry: true
-        serviceUrl:
-            defaultZone: http://admin:admin@localhost:8761/eureka/
 
 spring:
     devtools:
@@ -44,7 +33,7 @@ liquibase:
     contexts: prod
 
 server:
-    port: 8000
+    port: 8080
     compression:
         enabled: true
         mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
@@ -58,12 +47,17 @@ jhipster:
     http:
         cache: # Used by the CachingHttpHeadersFilter
             timeToLiveInDays: 1461
+    cache: # Hibernate 2nd level cache, used by CacheConfiguration
+        timeToLiveSeconds: 3600
+        hazelcast:
+            backupCount: 1
     security:
         authentication:
-            jwt:
-                secret: e3dbd45eb3dc7b605ecf752e54f3ceb31dca4b3d
-                # Token is valid 24 hours
-                tokenValidityInSeconds: 86400
+            oauth:
+                clientid: thingcareapp
+                secret: my-secret-token-to-change-in-production
+                # Token is valid 30 minutes
+                tokenValidityInSeconds: 1800
     mail: # specific JHipster mail property, for standard properties see MailProperties
         from: thingcare@localhost
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
@@ -86,8 +80,5 @@ jhipster:
             host: localhost
             port: 5000
             queueSize: 512
-        spectator-metrics: # Reports Spectator Circuit Breaker metrics in the logs
-            enabled: false
-            # edit spring.metrics.export.delay-millis to set report frequency
     swagger: # swagger is disabled. It can be disabled by pasing 'no-swagger' profile at run time as well
         enabled: false

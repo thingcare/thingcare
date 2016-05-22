@@ -11,15 +11,6 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-eureka:
-    instance:
-        appname: thingcare
-        instanceId: thingcare:${spring.application.instance_id:${random.value}}
-
-ribbon:
-    eureka:
-        enabled: true
-
 management:
     context-path: /management
     health:

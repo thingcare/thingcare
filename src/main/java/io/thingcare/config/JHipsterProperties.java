@@ -127,6 +127,8 @@ public class JHipsterProperties {
     public static class Cache {
 
         private int timeToLiveSeconds = 3600;
+        private final Hazelcast hazelcast = new Hazelcast();
+
 
         public int getTimeToLiveSeconds() {
             return timeToLiveSeconds;
@@ -134,6 +136,22 @@ public class JHipsterProperties {
 
         public void setTimeToLiveSeconds(int timeToLiveSeconds) {
             this.timeToLiveSeconds = timeToLiveSeconds;
+        }
+        public Hazelcast getHazelcast() {
+            return hazelcast;
+        }
+
+        public static class Hazelcast {
+
+            private int backupCount = 1;
+
+            public int getBackupCount() {
+                return backupCount;
+            }
+
+            public void setBackupCount(int backupCount) {
+                this.backupCount = backupCount;
+            }
         }
     }
 
@@ -160,18 +178,27 @@ public class JHipsterProperties {
 
         public static class Authentication {
 
-            private final Jwt jwt = new Jwt();
+            private final Oauth oauth = new Oauth();
 
-            public Jwt getJwt() {
-                return jwt;
+            public Oauth getOauth() {
+                return oauth;
             }
 
-            public static class Jwt {
+            public static class Oauth {
+
+                private String clientid;
 
                 private String secret;
 
-                private long tokenValidityInSeconds = 1800;
-                private long tokenValidityInSecondsForRememberMe = 2592000;
+                private int tokenValidityInSeconds = 1800;
+
+                public String getClientid() {
+                    return clientid;
+                }
+
+                public void setClientid(String clientid) {
+                    this.clientid = clientid;
+                }
 
                 public String getSecret() {
                     return secret;
@@ -181,20 +208,12 @@ public class JHipsterProperties {
                     this.secret = secret;
                 }
 
-                public long getTokenValidityInSeconds() {
+                public int getTokenValidityInSeconds() {
                     return tokenValidityInSeconds;
                 }
 
-                public void setTokenValidityInSeconds(long tokenValidityInSeconds) {
+                public void setTokenValidityInSeconds(int tokenValidityInSeconds) {
                     this.tokenValidityInSeconds = tokenValidityInSeconds;
-                }
-
-                public long getTokenValidityInSecondsForRememberMe() {
-                    return tokenValidityInSecondsForRememberMe;
-                }
-
-                public void setTokenValidityInSecondsForRememberMe(long tokenValidityInSecondsForRememberMe) {
-                    this.tokenValidityInSecondsForRememberMe = tokenValidityInSecondsForRememberMe;
                 }
             }
         }
@@ -480,18 +499,6 @@ public class JHipsterProperties {
             public void setQueueSize(int queueSize) { this.queueSize = queueSize; }
         }
 
-        private final SpectatorMetrics spectatorMetrics = new SpectatorMetrics();
-
-        public SpectatorMetrics getSpectatorMetrics() { return spectatorMetrics; }
-        
-        public static class SpectatorMetrics {
-
-            private boolean enabled = false;
-
-            public boolean isEnabled() { return enabled; }
-
-            public void setEnabled(boolean enabled) { this.enabled = enabled; }
-        }
     }
 
     public static class Ribbon {

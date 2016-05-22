@@ -3,6 +3,10 @@ package io.thingcare.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.web.SessionListener;
+import com.hazelcast.web.spring.SpringAwareWebFilter;
+import io.thingcare.web.filter.CachingHttpHeadersFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -45,8 +51,55 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
             log.info("Web application configuration, using profiles: {}", Arrays.toString(env.getActiveProfiles()));
         }
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
+        initClusteredHttpSessionFilter(servletContext, disps);
         initMetrics(servletContext, disps);
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+            initCachingHttpHeadersFilter(servletContext, disps);
+        }
         log.info("Web application fully configured");
+    }
+
+    /**
+     * Initializes the Clustered Http Session filter
+     */
+    private void initClusteredHttpSessionFilter(ServletContext servletContext, EnumSet<DispatcherType> disps) {
+        log.debug("Registering Clustered Http Session Filter");
+        servletContext.addListener(new SessionListener());
+
+        FilterRegistration.Dynamic hazelcastWebFilter = servletContext.addFilter("hazelcastWebFilter", new SpringAwareWebFilter());
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("instance-name", "thingcare");
+        // Name of the distributed map storing your web session objects
+        parameters.put("map-name", "clustered-http-sessions");
+
+        // How is your load-balancer configured?
+        // Setting "sticky-session" to "true" means all requests of a session
+        // are routed to the node where the session is first created.
+        // This is excellent for performance.
+        // If "sticky-session" is set to "false", then when a session is updated
+        // on a node, entries for this session on all other nodes are invalidated.
+        // You have to know how your load-balancer is configured before
+        // setting this parameter. Default is true.
+        parameters.put("sticky-session", "true");
+
+        // Name of session id cookie
+        parameters.put("cookie-name", "hazelcast.sessionId");
+
+        // Are you debugging? Default is false.
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+            parameters.put("debug", "false");
+        } else {
+            parameters.put("debug", "true");
+        }
+
+        // Do you want to shutdown HazelcastInstance during
+        // web application undeploy process?
+        // Default is true.
+        parameters.put("shutdown-on-destroy", "true");
+
+        hazelcastWebFilter.setInitParameters(parameters);
+        hazelcastWebFilter.addMappingForUrlPatterns(disps, true, "/*");
+        hazelcastWebFilter.setAsyncSupported(true);
     }
 
     /**
@@ -60,6 +113,51 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         // CloudFoundry issue, see https://github.com/cloudfoundry/gorouter/issues/64
         mappings.add("json", "text/html;charset=utf-8");
         container.setMimeMappings(mappings);
+
+        // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
+        setLocationForStaticAssets(container);
+    }
+
+    private void setLocationForStaticAssets(ConfigurableEmbeddedServletContainer container) {
+        File root;
+        String prefixPath = resolvePathPrefix();
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+            root = new File(prefixPath + "target/www/");
+        } else {
+            root = new File(prefixPath + "src/main/webapp/");
+        }
+        if (root.exists() && root.isDirectory()) {
+            container.setDocumentRoot(root);
+        }
+    }
+
+    /**
+     *  Resolve path prefix to static resources.
+     */
+    private String resolvePathPrefix() {
+        String fullExecutablePath = this.getClass().getResource("").getPath();
+        String rootPath = Paths.get(".").toUri().normalize().getPath();
+        String extractedPath = fullExecutablePath.replace(rootPath, "");
+        int extractionEndIndex = extractedPath.indexOf("target/");
+        if(extractionEndIndex <= 0) {
+            return "";
+        }
+        return extractedPath.substring(0, extractionEndIndex);
+    }
+
+    /**
+     * Initializes the caching HTTP Headers Filter.
+     */
+    private void initCachingHttpHeadersFilter(ServletContext servletContext,
+                                              EnumSet<DispatcherType> disps) {
+        log.debug("Registering Caching HTTP Headers Filter");
+        FilterRegistration.Dynamic cachingHttpHeadersFilter =
+            servletContext.addFilter("cachingHttpHeadersFilter",
+                new CachingHttpHeadersFilter(jHipsterProperties));
+
+        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/content/*");
+        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/app/*");
+        cachingHttpHeadersFilter.setAsyncSupported(true);
     }
 
     /**

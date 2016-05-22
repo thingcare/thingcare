@@ -4,33 +4,28 @@
     "baseName": "thingcare",
     "packageName": "io.thingcare",
     "packageFolder": "io/thingcare",
-    "serverPort": "8000",
-    "authenticationType": "uaa",
+    "serverPort": "8080",
+    "authenticationType": "oauth2",
     "hibernateCache": "no",
+    "clusteredHttpSession": "hazelcast",
+    "websocket": "spring-websocket",
     "databaseType": "mongodb",
     "devDatabaseType": "mongodb",
     "prodDatabaseType": "mongodb",
     "searchEngine": "no",
     "buildTool": "maven",
-    "jwtSecretKey": "e3dbd45eb3dc7b605ecf752e54f3ceb31dca4b3d",
-    "enableTranslation": true,
-    "applicationType": "microservice",
+    "useSass": true,
+    "applicationType": "monolith",
     "testFrameworks": [
       "gatling",
-      "cucumber"
+      "cucumber",
+      "protractor"
     ],
     "jhiPrefix": "jhi",
-    "skipClient": true,
-    "skipUserManagement": true,
+    "enableTranslation": true,
     "nativeLanguage": "en",
     "languages": [
-      "en",
-      "fr",
-      "de",
-      "pl"
-    ],
-    "clusteredHttpSession": "no",
-    "websocket": "no",
-    "enableSocialSignIn": false
+      "en"
+    ]
   }
 }

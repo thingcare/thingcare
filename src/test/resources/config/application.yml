@@ -10,13 +10,6 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-eureka:
-    client:
-        enabled: false
-    instance:
-        appname: thingcare
-        instanceId: thingcare:${spring.application.instance_id:${random.value}}
-
 spring:
     application:
         name: thingcare
@@ -55,10 +48,11 @@ jhipster:
         queueCapacity: 10000
     security:
         authentication:
-            jwt:
-                secret: e3dbd45eb3dc7b605ecf752e54f3ceb31dca4b3d
-                # Token is valid 24 hours
-                tokenValidityInSeconds: 86400
+            oauth:
+                clientid: thingcareapp
+                secret: my-secret-token-to-change-in-production
+                # Token is valid 30 minutes
+                tokenValidityInSeconds: 1800
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
     swagger:

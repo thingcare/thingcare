@@ -2,6 +2,7 @@ package io.thingcare.config;
 
 import com.github.mongobee.Mongobee;
 import com.mongodb.Mongo;
+import io.thingcare.config.oauth2.OAuth2AuthenticationReadConverter;
 import io.thingcare.domain.util.JSR310DateConverters.*;
 
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class CloudMongoDbConfiguration extends AbstractMongoConfiguration  {
     @Bean
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converterList = new ArrayList<>();;
+        converterList.add(new OAuth2AuthenticationReadConverter());
         converterList.add(DateToZonedDateTimeConverter.INSTANCE);
         converterList.add(ZonedDateTimeToDateConverter.INSTANCE);
         converterList.add(DateToLocalDateConverter.INSTANCE);

@@ -1,12 +1,5 @@
 package io.thingcare.config;
 
-import io.thingcare.config.metrics.SpectatorLogMetricWriter;
-import com.netflix.spectator.api.Registry;
-import org.springframework.boot.actuate.autoconfigure.ExportMetricReader;
-import org.springframework.boot.actuate.autoconfigure.ExportMetricWriter;
-import org.springframework.boot.actuate.metrics.writer.MetricWriter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.netflix.metrics.spectator.SpectatorMetricReader;
 
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
@@ -142,19 +135,4 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
         }
     }
 
-    /* Spectator metrics log reporting */
-    @Bean
-    @ConditionalOnProperty("jhipster.logging.spectator-metrics.enabled")
-    @ExportMetricReader
-    public SpectatorMetricReader SpectatorMetricReader(Registry registry) {
-        log.info("Initializing Spectator Metrics Log reporting");
-        return new SpectatorMetricReader(registry);
-    }
-
-    @Bean
-    @ConditionalOnProperty("jhipster.logging.spectator-metrics.enabled")
-    @ExportMetricWriter
-    MetricWriter metricWriter() {
-        return new SpectatorLogMetricWriter();
-    }
 }

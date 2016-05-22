@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ComponentScan
-@EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
+@EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class, HazelcastAutoConfiguration.class })
 @EnableConfigurationProperties({ JHipsterProperties.class })
-@EnableEurekaClient
 public class ThingcareApp {
 
     private static final Logger log = LoggerFactory.getLogger(ThingcareApp.class);
@@ -78,10 +77,6 @@ public class ThingcareApp {
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"));
 
-        String configServerStatus = env.getProperty("configserver.status");
-        log.info("\n----------------------------------------------------------\n\t" +
-        "Config Server: \t{}\n----------------------------------------------------------",
-            configServerStatus == null ? "Not found or not setup for this application" : configServerStatus);
     }
 
     /**
