@@ -11,9 +11,9 @@ import org.springframework.security.oauth2.provider.token.AuthenticationKeyGener
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A MongoDB implementation of the TokenStore.
@@ -55,7 +55,7 @@ public class MongoDBTokenStore implements TokenStore {
         if(token == null) {
             return null;
         }
-        return token.getoAuth2AccessToken();
+        return token.getOAuth2AccessToken();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MongoDBTokenStore implements TokenStore {
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        return oAuth2RefreshTokenRepository.findByTokenId(tokenValue).getoAuth2RefreshToken();
+        return oAuth2RefreshTokenRepository.findByTokenId(tokenValue).getOAuth2RefreshToken();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class MongoDBTokenStore implements TokenStore {
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
         OAuth2AuthenticationAccessToken token =  oAuth2AccessTokenRepository.findByAuthenticationId(authenticationKeyGenerator.extractKey(authentication));
-        return token == null ? null : token.getoAuth2AccessToken();
+        return token == null ? null : token.getOAuth2AccessToken();
     }
 
     @Override
@@ -113,10 +113,6 @@ public class MongoDBTokenStore implements TokenStore {
     }
 
     private Collection<OAuth2AccessToken> extractAccessTokens(List<OAuth2AuthenticationAccessToken> tokens) {
-        List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
-        for(OAuth2AuthenticationAccessToken token : tokens) {
-            accessTokens.add(token.getoAuth2AccessToken());
-        }
-        return accessTokens;
+        return tokens.stream().map(OAuth2AuthenticationAccessToken::getOAuth2AccessToken).collect(Collectors.toList());
     }
 }
