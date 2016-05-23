@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Converter to deserialize back into an OAuth2Authentication Object made necessary because
@@ -54,9 +55,7 @@ public class OAuth2AuthenticationReadConverter implements Converter<DBObject, OA
 
     private Collection<GrantedAuthority> getAuthorities(List<Map<String, String>> authorities) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorities.size());
-        for(Map<String, String> authority : authorities) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(authority.get("role")));
-        }
+        grantedAuthorities.addAll(authorities.stream().map(authority -> new SimpleGrantedAuthority(authority.get("role"))).collect(Collectors.toList()));
         return grantedAuthorities;
     }
 }

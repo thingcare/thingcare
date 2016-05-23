@@ -1,5 +1,6 @@
 package io.thingcare.domain;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,10 +10,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import java.io.Serializable;
 import java.util.UUID;
 
+@Data
 @Document(collection = "OAUTH_AUTHENTICATION_ACCESS_TOKEN")
 public class OAuth2AuthenticationAccessToken implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2561059148547756363L;
 
     @Id
     private String id;
@@ -40,53 +42,8 @@ public class OAuth2AuthenticationAccessToken implements Serializable {
         this.userName = authentication.getName();
         this.clientId = authentication.getOAuth2Request().getClientId();
         this.authentication = authentication;
-        if(oAuth2AccessToken.getRefreshToken() != null) {
+        if (oAuth2AccessToken.getRefreshToken() != null) {
             this.refreshToken = oAuth2AccessToken.getRefreshToken().getValue();
         }
-    }
-
-    public String getTokenId() {
-        return tokenId;
-    }
-
-    public OAuth2AccessToken getoAuth2AccessToken() {
-        return oAuth2AccessToken;
-    }
-
-    public String getAuthenticationId() {
-        return authenticationId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public OAuth2Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OAuth2AuthenticationAccessToken that = (OAuth2AuthenticationAccessToken) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }

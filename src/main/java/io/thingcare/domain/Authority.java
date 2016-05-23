@@ -1,8 +1,10 @@
 package io.thingcare.domain;
 
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -10,13 +12,14 @@ import java.io.Serializable;
 /**
  * An authority (a security role) used by Spring Security.
  */
+@Data
 @Document(collection = "security.authority")
 public class Authority implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1329781259259864522L;
 
     @NotNull
-    @Size(min = 0, max = 50)
+    @Size(max = 50)
     @Id
     private String name;
 
@@ -36,14 +39,8 @@ public class Authority implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Authority authority = (Authority) o;
-
-        if (name != null ? !name.equals(authority.name) : authority.name != null) {
-            return false;
-        }
-
-        return true;
+        return name != null ? name.equals(authority.name) : authority.name == null;
     }
 
     @Override
