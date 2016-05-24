@@ -1,5 +1,7 @@
 package io.thingcare.security;
 
+import io.thingcare.modules.security.authority.AuthoritiesConstants;
+import io.thingcare.modules.security.SecurityUtils;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

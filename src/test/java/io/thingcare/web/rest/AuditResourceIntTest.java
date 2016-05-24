@@ -1,10 +1,11 @@
 package io.thingcare.web.rest;
 
-import io.thingcare.ThingcareApp;
-import io.thingcare.config.audit.AuditEventConverter;
-import io.thingcare.domain.PersistentAuditEvent;
-import io.thingcare.repository.PersistenceAuditEventRepository;
-import io.thingcare.service.AuditEventService;
+import io.thingcare.ThingCareApp;
+import io.thingcare.core.config.audit.AuditEventConverter;
+import io.thingcare.modules.security.AuditResource;
+import io.thingcare.modules.security.audit.PersistentAuditEvent;
+import io.thingcare.modules.security.audit.PersistenceAuditEventRepository;
+import io.thingcare.modules.security.audit.AuditEventService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ThingcareApp.class)
+@SpringApplicationConfiguration(classes = ThingCareApp.class)
 @WebAppConfiguration
 @IntegrationTest
 public class AuditResourceIntTest {
