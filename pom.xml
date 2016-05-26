@@ -541,17 +541,40 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>${sonar-maven-plugin.version}</version>
             </plugin>
+            <!-- first de-lombok the sources to make getters/setters visible for mapstruct,
+            but *DON'T'* add the output directory to the sources, as we will only need it for mapstruct processing -->
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.16.8.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>src/main/java</sourceDirectory>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
                 <version>2.2.4</version>
                 <configuration>
                     <defaultOutputDirectory>
-                        ${project.build.directory}/generated-sources
+                        ${project.build.directory}/generated-sources/mapstruct
                     </defaultOutputDirectory>
                     <processors>
                         <processor>org.mapstruct.ap.MappingProcessor</processor>
                     </processors>
+                    <sourceDirectory>
+                        ${project.build.directory}/delombok
+                    </sourceDirectory>
                     <options>
                         <mapstruct.suppressGeneratorTimestamp>true</mapstruct.suppressGeneratorTimestamp>
                         <mapstruct.defaultComponentModel>spring</mapstruct.defaultComponentModel>
@@ -573,6 +596,17 @@
                         <version>${mapstruct.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <!-- now take the original sources together with the created mappers to the compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <annotationProcessors>
+                        <annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</annotationProcessor>
+                    </annotationProcessors>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
