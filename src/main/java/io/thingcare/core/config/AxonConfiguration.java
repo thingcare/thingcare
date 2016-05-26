@@ -1,4 +1,4 @@
-package io.thingcare.config;
+package io.thingcare.core.config;
 
 import java.util.Collections;
 
