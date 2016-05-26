@@ -60,6 +60,8 @@
         <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
         <sonar.tests>${project.basedir}/src/test/</sonar.tests>
         <lombok.version>1.16.8</lombok.version>
+        <axon.version>2.4.4</axon.version>
+        <spock.version>1.0-groovy-2.4</spock.version>
     </properties>
 
 
@@ -364,6 +366,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-core</artifactId>
+            <version>${axon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spock.version}</version>
         </dependency>
     </dependencies>
     <build>
