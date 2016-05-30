@@ -2,6 +2,8 @@ package io.thingcare.api.errors;
 
 import java.util.List;
 
+import io.thingcare.api.errors.common.ErrorDto;
+import io.thingcare.api.errors.common.ParameterizedErrorDto;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;

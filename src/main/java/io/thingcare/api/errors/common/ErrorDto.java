@@ -1,4 +1,4 @@
-package io.thingcare.api.errors;
+package io.thingcare.api.errors.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -25,9 +25,9 @@ import java.util.Map;
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class, HazelcastAutoConfiguration.class })
 @EnableConfigurationProperties({ JHipsterProperties.class })
-public class ThingCareApp {
+public class ThingCareApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(ThingCareApp.class);
+    private static final Logger log = LoggerFactory.getLogger(ThingCareApplication.class);
 
     @Inject
     private Environment env;
@@ -64,7 +64,7 @@ public class ThingCareApp {
      * @throws UnknownHostException if the local host name could not be resolved into an address
      */
     public static void main(String[] args) throws UnknownHostException {
-        SpringApplication app = new SpringApplication(ThingCareApp.class);
+        SpringApplication app = new SpringApplication(ThingCareApplication.class);
         addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         log.info("\n----------------------------------------------------------\n\t" +

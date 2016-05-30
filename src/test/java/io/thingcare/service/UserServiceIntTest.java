@@ -16,7 +16,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import io.thingcare.ThingCareApp;
+import io.thingcare.ThingCareApplication;
 import io.thingcare.core.util.RandomUtil;
 import io.thingcare.modules.security.user.UserRepository;
 import io.thingcare.modules.security.user.UserService;
@@ -27,7 +27,7 @@ import io.thingcare.modules.security.user.UserService;
  * @see UserService
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ThingCareApp.class)
+@SpringApplicationConfiguration(classes = ThingCareApplication.class)
 @WebAppConfiguration
 @IntegrationTest
 public class UserServiceIntTest {

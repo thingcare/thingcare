@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
-import io.thingcare.api.asset.AssetDto;
+import io.thingcare.api.asset.model.AssetDto;
 
 /**
  * Mapper for the entity Asset and its DTO AssetDTO.

@@ -25,8 +25,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import io.thingcare.ThingCareApp;
-import io.thingcare.api.asset.AssetDto;
+import io.thingcare.ThingCareApplication;
+import io.thingcare.api.asset.model.AssetDto;
 import io.thingcare.modules.asset.Asset;
 import io.thingcare.modules.asset.AssetMapper;
 import io.thingcare.modules.asset.AssetRepository;
@@ -39,7 +39,7 @@ import io.thingcare.modules.asset.AssetService;
  * @see AssetResource
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ThingCareApp.class)
+@SpringApplicationConfiguration(classes = ThingCareApplication.class)
 @WebAppConfiguration
 @IntegrationTest
 public class AssetResourceIntTest {

@@ -2,7 +2,7 @@ package io.thingcare.modules.asset;
 
 import org.springframework.stereotype.Component;
 
-import io.thingcare.api.asset.AssetDto;
+import io.thingcare.api.asset.model.AssetDto;
 
 @Component
 public class AssetFactory {

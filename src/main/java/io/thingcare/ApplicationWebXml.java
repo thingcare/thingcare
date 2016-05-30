@@ -14,7 +14,7 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
         /**
          * set a default to use when no profile is configured.
          */
-        ThingCareApp.addDefaultProfile(application.application());
-        return application.sources(ThingCareApp.class);
+        ThingCareApplication.addDefaultProfile(application.application());
+        return application.sources(ThingCareApplication.class);
     }
 }
