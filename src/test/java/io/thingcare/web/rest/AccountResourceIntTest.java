@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import io.thingcare.ThingCareApplication;
+import io.thingcare.ThingCareApp;
 import io.thingcare.api.security.user.ManagedUserDto;
 import io.thingcare.api.security.user.UserDto;
 import io.thingcare.core.MailService;
@@ -46,7 +46,7 @@ import io.thingcare.modules.security.user.UserService;
  * @see UserService
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ThingCareApplication.class)
+@SpringApplicationConfiguration(classes = ThingCareApp.class)
 @WebAppConfiguration
 @IntegrationTest
 public class AccountResourceIntTest {

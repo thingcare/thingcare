@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import io.thingcare.api.asset.model.AssetDto;
+import io.thingcare.api.asset.AssetDto;
 
 /**
  * Service Implementation for managing Asset.

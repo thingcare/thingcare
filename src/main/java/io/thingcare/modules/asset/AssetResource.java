@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.thingcare.api.asset.model.AssetDto;
+import io.thingcare.api.asset.AssetDto;
 import io.thingcare.api.web.util.HeaderUtil;
 import io.thingcare.api.web.util.PaginationUtil;
 

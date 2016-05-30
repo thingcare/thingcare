@@ -1,4 +1,4 @@
-package io.thingcare.api.errors.common;
+package io.thingcare.api.errors;
 
 import java.io.Serializable;
 

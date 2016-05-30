@@ -1,7 +1,5 @@
 package io.thingcare.api.errors;
 
-import io.thingcare.api.errors.common.ParameterizedErrorDto;
-
 /**
  * Custom, parameterized exception, which can be translated on the client side.
  * For example:
