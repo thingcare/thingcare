@@ -1,16 +1,15 @@
 package io.thingcare.modules.security.user;
 
-import javax.inject.Inject;
-
 import org.axonframework.commandhandling.annotation.CommandHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserCommandHandler {
 
-    @Inject
-    UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @CommandHandler
-    public User createUser(CreateUserCommand command) {
-        return userService.createUser(command.getManagedUserDto());
-    }
+	@CommandHandler
+	public User createUser(CreateUserCommand command) {
+		return userService.createUser(command.getManagedUserDto());
+	}
 }
