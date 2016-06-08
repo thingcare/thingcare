@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.thingcare.api.security.user.UserCommonConstants;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +28,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.thingcare.api.security.user.ManagedUserDto;
-import io.thingcare.api.security.user.UserCommonConstants;
 import io.thingcare.api.web.util.HeaderUtil;
 import io.thingcare.api.web.util.PaginationUtil;
 import io.thingcare.modules.security.authority.AuthoritiesConstants;
 import io.thingcare.modules.security.authority.Authority;
 import io.thingcare.modules.security.authority.AuthorityRepository;
+import io.thingcare.modules.security.user.CreateUserCommand;
 import io.thingcare.modules.security.user.ManagedUserMapper;
 import io.thingcare.modules.security.user.User;
 import io.thingcare.modules.security.user.UserRepository;
@@ -82,6 +84,9 @@ public class UserResource {
 	@Autowired
 	private ManagedUserMapper managedUserMapper;
 
+	@Autowired
+	private CommandGateway commandGateway;
+
 	/**
 	 * POST /users : Creates a new user.
 	 * <p>
@@ -107,20 +112,22 @@ public class UserResource {
 
 		// Lowercase the user login before comparing with database
 		if (userRepository	.findOneByLogin(managedUserDto	.getLogin()
-															.toLowerCase())
-							.isPresent()) {
+				.toLowerCase())
+				.isPresent()) {
 			return ResponseEntity	.badRequest()
-									.headers(HeaderUtil.createFailureAlert("userManagement", "userexists",
-											"Login already in use"))
-									.body(null);
+					.headers(HeaderUtil.createFailureAlert("userManagement", "userexists",
+							"Login already in use"))
+					.body(null);
 		} else if (userRepository	.findOneByEmail(managedUserDto.getEmail())
-									.isPresent()) {
+				.isPresent()) {
 			return ResponseEntity	.badRequest()
-									.headers(HeaderUtil.createFailureAlert("userManagement", "emailexists",
-											"Email already in use"))
-									.body(null);
+					.headers(HeaderUtil.createFailureAlert("userManagement", "emailexists",
+							"Email already in use"))
+					.body(null);
 		} else {
-			User newUser = userService.createUser(managedUserDto);
+			User newUser = commandGateway.sendAndWait(CreateUserCommand	.builder()
+					.managedUserDto(managedUserDto)
+					.build());
 			String baseUrl = request.getScheme() + // "http"
 					"://" + // "://"
 					request.getServerName() + // "myhost"
@@ -129,8 +136,8 @@ public class UserResource {
 					request.getContextPath(); // "/myContextPath" or "" if deployed in root context
 			// mailService.sendCreationEmail(newUser, baseUrl);
 			return ResponseEntity	.created(new URI("/api/users/" + newUser.getLogin()))
-									.headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
-									.body(newUser);
+					.headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
+					.body(newUser);
 		}
 	}
 
@@ -149,45 +156,45 @@ public class UserResource {
 		log.debug("REST request to update User : {}", managedUserDto);
 		Optional<User> existingUser = userRepository.findOneByEmail(managedUserDto.getEmail());
 		if (existingUser.isPresent() && (!existingUser	.get()
-														.getId()
-														.equals(managedUserDto.getId()))) {
+				.getId()
+				.equals(managedUserDto.getId()))) {
 			return ResponseEntity	.badRequest()
-									.headers(HeaderUtil.createFailureAlert("userManagement", "emailexists",
-											"E-mail already in use"))
-									.body(null);
+					.headers(HeaderUtil.createFailureAlert("userManagement", "emailexists",
+							"E-mail already in use"))
+					.body(null);
 		}
 		existingUser = userRepository.findOneByLogin(managedUserDto	.getLogin()
-																	.toLowerCase());
+				.toLowerCase());
 		if (existingUser.isPresent() && (!existingUser	.get()
-														.getId()
-														.equals(managedUserDto.getId()))) {
+				.getId()
+				.equals(managedUserDto.getId()))) {
 			return ResponseEntity	.badRequest()
-									.headers(HeaderUtil.createFailureAlert("userManagement", "userexists",
-											"Login already in use"))
-									.body(null);
+					.headers(HeaderUtil.createFailureAlert("userManagement", "userexists",
+							"Login already in use"))
+					.body(null);
 		}
 		return userRepository	.findOneById(managedUserDto.getId())
-								.map(user -> {
-									user.setLogin(managedUserDto.getLogin());
-									user.setFirstName(managedUserDto.getFirstName());
-									user.setLastName(managedUserDto.getLastName());
-									user.setEmail(managedUserDto.getEmail());
-									user.setActivated(managedUserDto.isActivated());
-									user.setLangKey(managedUserDto.getLangKey());
-									Set<Authority> authorities = user.getAuthorities();
-									authorities.clear();
-									managedUserDto	.getAuthorities()
-													.stream()
-													.forEach(authority -> authorities.add(
-															authorityRepository.findOne(authority)));
-									userRepository.save(user);
-									return ResponseEntity	.ok()
-															.headers(HeaderUtil.createAlert("userManagement.updated",
-																	managedUserDto.getLogin()))
-															.body(managedUserMapper.asDto(
-																	userRepository.findOne(managedUserDto.getId())));
-								})
-								.orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+				.map(user -> {
+					user.setLogin(managedUserDto.getLogin());
+					user.setFirstName(managedUserDto.getFirstName());
+					user.setLastName(managedUserDto.getLastName());
+					user.setEmail(managedUserDto.getEmail());
+					user.setActivated(managedUserDto.isActivated());
+					user.setLangKey(managedUserDto.getLangKey());
+					Set<Authority> authorities = user.getAuthorities();
+					authorities.clear();
+					managedUserDto	.getAuthorities()
+							.stream()
+							.forEach(authority -> authorities.add(
+									authorityRepository.findOne(authority)));
+					userRepository.save(user);
+					return ResponseEntity	.ok()
+							.headers(HeaderUtil.createAlert("userManagement.updated",
+									managedUserDto.getLogin()))
+							.body(managedUserMapper.asDto(
+									userRepository.findOne(managedUserDto.getId())));
+				})
+				.orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	/**
@@ -203,9 +210,9 @@ public class UserResource {
 	public ResponseEntity<List<ManagedUserDto>> getAllUsers(Pageable pageable) throws URISyntaxException {
 		Page<User> page = userRepository.findAll(pageable);
 		List<ManagedUserDto> managedUserDtos = page	.getContent()
-													.stream()
-													.map(managedUserMapper::asDto)
-													.collect(Collectors.toList());
+				.stream()
+				.map(managedUserMapper::asDto)
+				.collect(Collectors.toList());
 		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
 		return new ResponseEntity<>(managedUserDtos, headers, HttpStatus.OK);
 	}
@@ -222,9 +229,9 @@ public class UserResource {
 	public ResponseEntity<ManagedUserDto> getUser(@PathVariable String login) {
 		log.debug("REST request to get User : {}", login);
 		return userService	.getUserWithAuthoritiesByLogin(login)
-							.map(managedUserMapper::asDto)
-							.map(managedUserDTO -> new ResponseEntity<>(managedUserDTO, HttpStatus.OK))
-							.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+				.map(managedUserMapper::asDto)
+				.map(managedUserDTO -> new ResponseEntity<>(managedUserDTO, HttpStatus.OK))
+				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	/**
@@ -241,7 +248,7 @@ public class UserResource {
 		log.debug("REST request to delete User: {}", login);
 		userService.deleteUserInformation(login);
 		return ResponseEntity	.ok()
-								.headers(HeaderUtil.createAlert("userManagement.deleted", login))
-								.build();
+				.headers(HeaderUtil.createAlert("userManagement.deleted", login))
+				.build();
 	}
 }
