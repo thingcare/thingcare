@@ -1,5 +1,7 @@
 package io.thingcare.modules.security;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -7,9 +9,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
+import com.codahale.metrics.annotation.Timed;
+import io.thingcare.api.security.user.ManagedUserDto;
+import io.thingcare.api.web.util.HeaderUtil;
+import io.thingcare.api.web.util.PaginationUtil;
+import io.thingcare.core.MailService;
+import io.thingcare.core.config.Constants;
+import io.thingcare.modules.security.authority.AuthoritiesConstants;
+import io.thingcare.modules.security.authority.Authority;
+import io.thingcare.modules.security.authority.AuthorityRepository;
+import io.thingcare.modules.security.user.CreateUserCommand;
+import io.thingcare.modules.security.user.ManagedUserMapper;
+import io.thingcare.modules.security.user.User;
+import io.thingcare.modules.security.user.UserRepository;
+import io.thingcare.modules.security.user.UserService;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,21 +38,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.codahale.metrics.annotation.Timed;
-
-import io.thingcare.api.security.user.ManagedUserDto;
-import io.thingcare.api.web.util.HeaderUtil;
-import io.thingcare.api.web.util.PaginationUtil;
-import io.thingcare.core.MailService;
-import io.thingcare.core.config.Constants;
-import io.thingcare.modules.security.authority.AuthoritiesConstants;
-import io.thingcare.modules.security.authority.Authority;
-import io.thingcare.modules.security.authority.AuthorityRepository;
-import io.thingcare.modules.security.user.ManagedUserMapper;
-import io.thingcare.modules.security.user.User;
-import io.thingcare.modules.security.user.UserRepository;
-import io.thingcare.modules.security.user.UserService;
 
 /**
  * REST controller for managing users.
@@ -88,6 +87,9 @@ public class UserResource {
 	@Inject
 	private ManagedUserMapper managedUserMapper;
 
+    @Inject
+    private CommandGateway commandGateway;
+
 	/**
 	 * POST /users : Creates a new user.
 	 * <p>
@@ -127,7 +129,7 @@ public class UserResource {
 											"Email already in use"))
 									.body(null);
 		} else {
-			User newUser = userService.createUser(managedUserDto);
+			User newUser = commandGateway.sendAndWait(CreateUserCommand.builder().managedUserDto(managedUserDto).build());
 			String baseUrl = request.getScheme() + // "http"
 					"://" + // "://"
 					request.getServerName() + // "myhost"
