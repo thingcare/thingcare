@@ -1,11 +1,6 @@
 package io.thingcare.core.config;
 
-import io.thingcare.core.config.oauth2.MongoDBTokenStore;
-import io.thingcare.modules.security.oauth.OAuth2AccessTokenRepository;
-import io.thingcare.modules.security.oauth.OAuth2RefreshTokenRepository;
-import io.thingcare.modules.security.oauth.AjaxLogoutSuccessHandler;
-import io.thingcare.modules.security.authority.AuthoritiesConstants;
-import io.thingcare.modules.security.authority.Http401UnauthorizedEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,99 +14,116 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-import javax.inject.Inject;
+import io.thingcare.core.config.security.MongoDBTokenStore;
+import io.thingcare.modules.security.authority.AuthoritiesConstants;
+import io.thingcare.modules.security.authority.Http401UnauthorizedEntryPoint;
+import io.thingcare.modules.security.oauth.AjaxLogoutSuccessHandler;
+import io.thingcare.modules.security.oauth.OAuth2AccessTokenRepository;
+import io.thingcare.modules.security.oauth.OAuth2RefreshTokenRepository;
 
 @Configuration
 public class OAuth2ServerConfiguration {
 
-    @Configuration
-    @EnableResourceServer
-    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+	@Configuration
+	@EnableResourceServer
+	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+		@Autowired
+		private Http401UnauthorizedEntryPoint authenticationEntryPoint;
+		@Autowired
+		private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
 
-        @Inject
-        private Http401UnauthorizedEntryPoint authenticationEntryPoint;
+		@Override
+		public void configure(HttpSecurity http) throws Exception {
+			http.exceptionHandling()
+				.authenticationEntryPoint(authenticationEntryPoint)
+				.and()
+				.logout()
+				.logoutUrl("/api/logout")
+				.logoutSuccessHandler(ajaxLogoutSuccessHandler)
+				.and()
+				.csrf()
+				.disable()
+				.headers()
+				.frameOptions()
+				.disable()
+				.and()
+				.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS, "/**")
+				.permitAll()
+				.antMatchers("/api/authenticate")
+				.permitAll()
+				.antMatchers("/api/register")
+				.permitAll()
+				.antMatchers("/api/**")
+				.authenticated()
+				.antMatchers("/websocket/tracker")
+				.hasAuthority(AuthoritiesConstants.ADMIN)
+				.antMatchers("/websocket/**")
+				.permitAll()
+				.antMatchers("/management/**")
+				.hasAuthority(AuthoritiesConstants.ADMIN)
+				.antMatchers("/v2/api-docs/**")
+				.permitAll()
+				.antMatchers("/configuration/ui")
+				.permitAll()
+				.antMatchers("/swagger-ui/index.html")
+				.hasAuthority(AuthoritiesConstants.ADMIN);
+		}
+	}
 
-        @Inject
-        private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
+	@Configuration
+	@EnableAuthorizationServer
+	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            http
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint)
-            .and()
-                .logout()
-                .logoutUrl("/api/logout")
-                .logoutSuccessHandler(ajaxLogoutSuccessHandler)
-            .and()
-                .csrf()
-                .disable()
-                .headers()
-                .frameOptions().disable()
-            .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/api/authenticate").permitAll()
-                .antMatchers("/api/register").permitAll()
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/websocket/tracker").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/websocket/**").permitAll()
-                .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/v2/api-docs/**").permitAll()
-                .antMatchers("/configuration/ui").permitAll()
-                .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);
-        }
-    }
+		@Autowired
+		private OAuth2AccessTokenRepository oAuth2AccessTokenRepository;
 
-    @Configuration
-    @EnableAuthorizationServer
-    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+		@Autowired
+		private OAuth2RefreshTokenRepository oAuth2RefreshTokenRepository;
 
-        @Inject
-        private OAuth2AccessTokenRepository oAuth2AccessTokenRepository;
+		@Autowired
+		private ThingcareProperties thingcareProperties;
+		@Autowired
+		@Qualifier("authenticationManagerBean")
+		private AuthenticationManager authenticationManager;
 
-        @Inject
-        private OAuth2RefreshTokenRepository oAuth2RefreshTokenRepository;
+		@Bean
+		public TokenStore tokenStore() {
+			return new MongoDBTokenStore(oAuth2AccessTokenRepository, oAuth2RefreshTokenRepository);
+		}
 
-        @Inject
-        private JHipsterProperties jHipsterProperties;
+		@Override
+		public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 
-        @Bean
-        public TokenStore tokenStore() {
-            return new MongoDBTokenStore(oAuth2AccessTokenRepository, oAuth2RefreshTokenRepository);
-        }
+			endpoints	.tokenStore(tokenStore())
+						.authenticationManager(authenticationManager);
+		}
 
-        @Inject
-        @Qualifier("authenticationManagerBean")
-        private AuthenticationManager authenticationManager;
+		@Override
+		public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+			oauthServer.allowFormAuthenticationForClients();
+		}
 
-        @Override
-        public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-                throws Exception {
-
-            endpoints
-                    .tokenStore(tokenStore())
-                    .authenticationManager(authenticationManager);
-        }
-
-        @Override
-        public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-            oauthServer.allowFormAuthenticationForClients();
-        }
-
-        @Override
-        public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            clients
-                .inMemory()
-                .withClient(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid())
-                .scopes("read", "write")
-                .authorities(AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER)
-                .authorizedGrantTypes("password", "refresh_token", "authorization_code", "implicit")
-                .secret(jHipsterProperties.getSecurity().getAuthentication().getOauth().getSecret())
-                .accessTokenValiditySeconds(jHipsterProperties.getSecurity().getAuthentication().getOauth().getTokenValidityInSeconds());
-        }
-    }
+		@Override
+		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+			clients	.inMemory()
+					.withClient(thingcareProperties	.getSecurity()
+													.getAuthentication()
+													.getOauth()
+													.getClientid())
+					.scopes("read", "write")
+					.authorities(AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER)
+					.authorizedGrantTypes("password", "refresh_token", "authorization_code", "implicit")
+					.secret(thingcareProperties	.getSecurity()
+												.getAuthentication()
+												.getOauth()
+												.getSecret())
+					.accessTokenValiditySeconds(thingcareProperties	.getSecurity()
+																	.getAuthentication()
+																	.getOauth()
+																	.getTokenValidityInSeconds());
+		}
+	}
 }

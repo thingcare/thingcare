@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import io.thingcare.modules.security.authority.Authority;
+import io.thingcare.api.security.user.UserCommonConstants;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.thingcare.api.AuditingEntity;
-import io.thingcare.core.config.Constants;
+import io.thingcare.modules.security.authority.Authority;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,7 +30,7 @@ public class User extends AuditingEntity {
 	private static final long serialVersionUID = -8683910611333118104L;
 
 	@NotNull
-	@Pattern(regexp = Constants.LOGIN_REGEX)
+	@Pattern(regexp = UserCommonConstants.LOGIN_REGEX)
 	@Size(min = 1, max = 50)
 	private String login;
 

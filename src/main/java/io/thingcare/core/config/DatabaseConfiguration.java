@@ -3,16 +3,12 @@ package io.thingcare.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
@@ -24,27 +20,26 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import com.github.mongobee.Mongobee;
 import com.mongodb.Mongo;
 
-import io.thingcare.core.config.oauth2.OAuth2AuthenticationReadConverter;
+import io.thingcare.core.config.security.OAuth2AuthenticationReadConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.DateToLocalDateConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.DateToLocalDateTimeConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.DateToZonedDateTimeConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.LocalDateTimeToDateConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.LocalDateToDateConverter;
 import io.thingcare.core.config.utils.JSR310DateConverters.ZonedDateTimeToDateConverter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
-@Profile("!" + Constants.SPRING_PROFILE_CLOUD)
 @EnableMongoRepositories("io.thingcare")
 @Import(value = MongoAutoConfiguration.class)
 @EnableMongoAuditing(auditorAwareRef = "springSecurityAuditorAware")
 public class DatabaseConfiguration extends AbstractMongoConfiguration {
 
-	private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
-
-	@Inject
+	@Autowired
 	private Mongo mongo;
 
-	@Inject
+	@Autowired
 	private MongoProperties mongoProperties;
 
 	@Bean

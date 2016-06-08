@@ -2,7 +2,6 @@ package io.thingcare.api;
 
 import java.time.ZonedDateTime;
 
-import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -11,8 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Data
 public abstract class AuditingEntity extends Entity {

@@ -13,7 +13,6 @@ import lombok.Data;
 @Data
 @Document(collection = "security.Authority")
 public class Authority implements Serializable {
-
 	private static final long serialVersionUID = 1329781259259864522L;
 
 	@NotNull

@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.thingcare.api.security.user.ManagedUserDto;
-import io.thingcare.core.util.RandomUtil;
+import io.thingcare.api.util.RandomUtil;
 import io.thingcare.modules.security.SecurityUtils;
 import io.thingcare.modules.security.authority.Authority;
 import io.thingcare.modules.security.authority.AuthorityRepository;
@@ -28,13 +27,13 @@ public class UserService {
 
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	@Inject
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Inject
+	@Autowired
 	private UserRepository userRepository;
 
-	@Inject
+	@Autowired
 	private AuthorityRepository authorityRepository;
 
 	public Optional<User> activateRegistration(String key) {

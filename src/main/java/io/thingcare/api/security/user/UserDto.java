@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 
 import io.thingcare.api.Dto;
-import io.thingcare.core.config.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +19,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto extends Dto {
-    private static final long serialVersionUID = 3451895519210077208L;
+	private static final long serialVersionUID = 3451895519210077208L;
 
-    @NotNull
-	@Pattern(regexp = Constants.LOGIN_REGEX)
+	@NotNull
+	@Pattern(regexp = UserCommonConstants.LOGIN_REGEX)
 	@Size(min = 1, max = 50)
 	private String login;
 

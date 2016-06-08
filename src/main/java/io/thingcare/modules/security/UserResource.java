@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -25,13 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
-
 import io.thingcare.api.security.user.ManagedUserDto;
+import io.thingcare.api.security.user.UserCommonConstants;
 import io.thingcare.api.web.util.HeaderUtil;
 import io.thingcare.api.web.util.PaginationUtil;
-import io.thingcare.core.MailService;
-import io.thingcare.core.config.Constants;
 import io.thingcare.modules.security.authority.AuthoritiesConstants;
 import io.thingcare.modules.security.authority.Authority;
 import io.thingcare.modules.security.authority.AuthorityRepository;
@@ -74,18 +71,15 @@ public class UserResource {
 
 	private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
-	@Inject
+	@Autowired
 	private UserRepository userRepository;
 
-	@Inject
-	private MailService mailService;
-
-	@Inject
+	@Autowired
 	private AuthorityRepository authorityRepository;
 
-	@Inject
+	@Autowired
 	private UserService userService;
-	@Inject
+	@Autowired
 	private ManagedUserMapper managedUserMapper;
 
 	/**
@@ -106,7 +100,6 @@ public class UserResource {
 	 *             if the Location URI syntaxt is incorrect
 	 */
 	@RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Timed
 	@Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<?> createUser(@RequestBody ManagedUserDto managedUserDto, HttpServletRequest request)
 			throws URISyntaxException {
@@ -134,7 +127,7 @@ public class UserResource {
 					":" + // ":"
 					request.getServerPort() + // "80"
 					request.getContextPath(); // "/myContextPath" or "" if deployed in root context
-			mailService.sendCreationEmail(newUser, baseUrl);
+			// mailService.sendCreationEmail(newUser, baseUrl);
 			return ResponseEntity	.created(new URI("/api/users/" + newUser.getLogin()))
 									.headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
 									.body(newUser);
@@ -151,7 +144,6 @@ public class UserResource {
 	 *         or with status 500 (Internal Server Error) if the user couldnt be updated
 	 */
 	@RequestMapping(value = "/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Timed
 	@Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<ManagedUserDto> updateUser(@RequestBody ManagedUserDto managedUserDto) {
 		log.debug("REST request to update User : {}", managedUserDto);
@@ -208,7 +200,6 @@ public class UserResource {
 	 *             if the pagination headers couldnt be generated
 	 */
 	@RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Timed
 	public ResponseEntity<List<ManagedUserDto>> getAllUsers(Pageable pageable) throws URISyntaxException {
 		Page<User> page = userRepository.findAll(pageable);
 		List<ManagedUserDto> managedUserDtos = page	.getContent()
@@ -226,9 +217,8 @@ public class UserResource {
 	 *            the login of the user to find
 	 * @return the ResponseEntity with status 200 (OK) and with body the "login" user, or with status 404 (Not Found)
 	 */
-	@RequestMapping(value = "/users/{login:" + Constants.LOGIN_REGEX
+	@RequestMapping(value = "/users/{login:" + UserCommonConstants.LOGIN_REGEX
 			+ "}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Timed
 	public ResponseEntity<ManagedUserDto> getUser(@PathVariable String login) {
 		log.debug("REST request to get User : {}", login);
 		return userService	.getUserWithAuthoritiesByLogin(login)
@@ -244,9 +234,8 @@ public class UserResource {
 	 *            the login of the user to delete
 	 * @return the ResponseEntity with status 200 (OK)
 	 */
-	@RequestMapping(value = "/users/{login:" + Constants.LOGIN_REGEX
+	@RequestMapping(value = "/users/{login:" + UserCommonConstants.LOGIN_REGEX
 			+ "}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Timed
 	@Secured(AuthoritiesConstants.ADMIN)
 	public ResponseEntity<Void> deleteUser(@PathVariable String login) {
 		log.debug("REST request to delete User: {}", login);

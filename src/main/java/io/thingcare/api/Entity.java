@@ -2,17 +2,17 @@ package io.thingcare.api;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 
 import lombok.Data;
 
 @Data
 public class Entity implements Serializable {
-    private static final long serialVersionUID = 5483062864964343432L;
+	private static final long serialVersionUID = 5483062864964343432L;
 
-    @Id
+	@Id
 	protected String id;
 	protected String externalId;
 	protected String code;
