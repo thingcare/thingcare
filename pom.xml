@@ -26,9 +26,12 @@
         <!--DEPENDENCIES-->
         <commons-lang.version>2.6</commons-lang.version>
         <lombok.version>1.16.8</lombok.version>
-        <axon.version>2.4.4</axon.version>
+        <axon.version>3.0-M1</axon.version>
         <mongobee.version>0.11</mongobee.version>
         <mapstruct.version>1.0.0.Final</mapstruct.version>
+        <groovy.version>2.4.7</groovy.version>
+        <junit.version>4.12</junit.version>
+        <spock.version>1.0-groovy-2.4</spock.version>
     </properties>
 
     <dependencies>
@@ -92,6 +95,16 @@
             <version>${axon.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-spring</artifactId>
+            <version>${axon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-mongo</artifactId>
+            <version>${axon.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.mongobee</groupId>
             <artifactId>mongobee</artifactId>
             <version>${mongobee.version}</version>
@@ -109,6 +122,24 @@
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
