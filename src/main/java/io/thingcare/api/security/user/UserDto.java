@@ -1,24 +1,23 @@
 package io.thingcare.api.security.user;
 
-import java.util.Set;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
+import java.util.Set;
 
 import io.thingcare.api.Dto;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Email;
 
 @Data
-@Builder
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto extends Dto {
+
 	private static final long serialVersionUID = 3451895519210077208L;
 
 	@NotNull
