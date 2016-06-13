@@ -3,6 +3,7 @@ package io.thingcare.security.user;
 import io.thingcare.api.security.user.CreateUserCommand;
 import io.thingcare.api.security.user.ManagedUserDto;
 import io.thingcare.modules.security.user.UserCommandHandler;
+import io.thingcare.modules.security.user.UserFactory;
 import io.thingcare.modules.security.user.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,19 +20,20 @@ public class UserCommandHandlerTest {
 
 	@Mock
 	private CreateUserCommand command;
-
 	@Mock
-	private UserService service = new UserService();
+	private UserFactory factory;
+	@Mock
+	private UserService service;
 
 	@Test
 	public void createUserCommandHandlingTest() {
 		givenCommandWithCreateUser();
 		whenHandlingCommand();
-		thenServiceIsInvoked();
+		thenFactoryIsInvoked();
 	}
 
-	private void thenServiceIsInvoked() {
-		Mockito.verify(service).createUser(Mockito.any(ManagedUserDto.class));
+	private void thenFactoryIsInvoked() {
+		Mockito.verify(factory).create(Mockito.any(ManagedUserDto.class));
 	}
 
 	private void whenHandlingCommand() {

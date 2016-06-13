@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import io.thingcare.api.security.user.ManagedUserDto;
 import io.thingcare.api.util.RandomUtil;
 import io.thingcare.modules.security.SecurityUtils;
 import io.thingcare.modules.security.authority.Authority;
@@ -34,6 +33,10 @@ public class UserService {
 
 	@Autowired
 	private AuthorityRepository authorityRepository;
+
+	public User save(User user) {
+		return userRepository.save(user);
+	}
 
 	public Optional<User> activateRegistration(String key) {
 		log.debug("Activating user for activation key {}", key);
@@ -96,32 +99,7 @@ public class UserService {
 		return newUser;
 	}
 
-	public User createUser(ManagedUserDto managedUserDto) {
-		User user = new User();
-		user.setLogin(managedUserDto.getLogin());
-		user.setFirstName(managedUserDto.getFirstName());
-		user.setLastName(managedUserDto.getLastName());
-		user.setEmail(managedUserDto.getEmail());
-		if (managedUserDto.getLangKey() == null) {
-			user.setLangKey("en"); // default language
-		} else {
-			user.setLangKey(managedUserDto.getLangKey());
-		}
-		if (managedUserDto.getAuthorities() != null) {
-			Set<Authority> authorities = new HashSet<>();
-			managedUserDto.getAuthorities().stream()
-					.forEach(authority -> authorities.add(authorityRepository.findOne(authority)));
-			user.setAuthorities(authorities);
-		}
-		String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
-		user.setPassword(encryptedPassword);
-		user.setResetKey(RandomUtil.generateResetKey());
-		user.setResetDate(ZonedDateTime.now());
-		user.setActivated(true);
-		userRepository.save(user);
-		log.debug("Created Information for User: {}", user);
-		return user;
-	}
+
 
 	public void updateUserInformation(String firstName, String lastName, String email, String langKey) {
 		userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).ifPresent(u -> {
