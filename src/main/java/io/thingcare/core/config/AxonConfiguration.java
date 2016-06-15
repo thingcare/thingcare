@@ -2,6 +2,8 @@ package io.thingcare.core.config;
 
 import java.util.Collections;
 
+import io.thingcare.modules.command.CustomQueryGateway;
+import io.thingcare.modules.command.QueryGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
@@ -45,7 +47,13 @@ public class AxonConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public CommandGateway commandGateway() {
-		return new DefaultCommandGateway(queryBus());
+		return new DefaultCommandGateway(commandBus());
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public QueryGateway queryGateway() {
+		return new CustomQueryGateway(queryBus());
 	}
 
 }
