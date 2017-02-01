@@ -1,12 +1,11 @@
 package io.thingcare.api;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import lombok.Data;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 
-import lombok.Data;
+import java.io.Serializable;
 
 @Data
 public class Entity implements Serializable {

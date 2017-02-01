@@ -18,6 +18,8 @@ spring:
             enabled: false
     thymeleaf:
         mode: XHTML
+    session:
+      store-type: none
     data:
         mongodb:
             uri: mongodb://localhost:27017
@@ -29,13 +31,6 @@ security:
         enabled: true
 
 thingcare:
-    security:
-        authentication:
-            oauth:
-                clientid: thingcareapp
-                secret: my-secret-token-to-change-in-production
-                # Token is valid 30 minutes
-                tokenValidityInSeconds: 1800
     async:
         corePoolSize: 2
         maxPoolSize: 50

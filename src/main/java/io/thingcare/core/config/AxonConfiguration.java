@@ -1,10 +1,5 @@
 package io.thingcare.core.config;
 
-import java.util.Collections;
-
-import io.thingcare.modules.command.CustomQueryGateway;
-import io.thingcare.modules.command.QueryGateway;
-import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -17,24 +12,26 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.thingcare.modules.command.CustomQueryGateway;
+import io.thingcare.modules.command.QueryGateway;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Configuration
 @ConditionalOnClass(value = CommandBus.class)
 public class AxonConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
 	public CommandBus commandBus() {
 		SimpleCommandBus commandBus = new SimpleCommandBus();
-		commandBus.setHandlerInterceptors(Collections.singletonList(new BeanValidationInterceptor<>()));
+		commandBus.registerHandlerInterceptor(new BeanValidationInterceptor<>());
 		return commandBus;
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
 	public CommandBus queryBus() {
 		SimpleCommandBus queryBus = new SimpleCommandBus();
-		queryBus.setHandlerInterceptors(Collections.singletonList(new BeanValidationInterceptor<>()));
+		queryBus.registerHandlerInterceptor(new BeanValidationInterceptor<>());
 		return queryBus;
 	}
 

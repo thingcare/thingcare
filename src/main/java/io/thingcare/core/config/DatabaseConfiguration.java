@@ -1,8 +1,8 @@
 package io.thingcare.core.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.mongodb.Mongo;
+import io.thingcare.core.config.utils.JSR310DateConverters.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
@@ -17,17 +17,8 @@ import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventL
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.github.mongobee.Mongobee;
-import com.mongodb.Mongo;
-
-import io.thingcare.core.config.security.OAuth2AuthenticationReadConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.DateToLocalDateConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.DateToLocalDateTimeConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.DateToZonedDateTimeConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.LocalDateTimeToDateConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.LocalDateToDateConverter;
-import io.thingcare.core.config.utils.JSR310DateConverters.ZonedDateTimeToDateConverter;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -65,7 +56,6 @@ public class DatabaseConfiguration extends AbstractMongoConfiguration {
 	@Bean
 	public CustomConversions customConversions() {
 		List<Converter<?, ?>> converters = new ArrayList<>();
-		converters.add(new OAuth2AuthenticationReadConverter());
 		converters.add(DateToZonedDateTimeConverter.INSTANCE);
 		converters.add(ZonedDateTimeToDateConverter.INSTANCE);
 		converters.add(DateToLocalDateConverter.INSTANCE);
@@ -73,16 +63,5 @@ public class DatabaseConfiguration extends AbstractMongoConfiguration {
 		converters.add(DateToLocalDateTimeConverter.INSTANCE);
 		converters.add(LocalDateTimeToDateConverter.INSTANCE);
 		return new CustomConversions(converters);
-	}
-
-	@Bean
-	public Mongobee mongobee() {
-		log.debug("Configuring Mongobee");
-		Mongobee mongobee = new Mongobee(mongo);
-		mongobee.setDbName(mongoProperties.getDatabase());
-		// package to scan for migrations
-		mongobee.setChangeLogsScanPackage("io.thingcare");
-		mongobee.setEnabled(true);
-		return mongobee;
 	}
 }

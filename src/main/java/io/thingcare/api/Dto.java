@@ -1,9 +1,9 @@
 package io.thingcare.api;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import java.io.Serializable;
 
 public abstract class Dto implements Serializable {
 	private static final long serialVersionUID = -523546860789997366L;
