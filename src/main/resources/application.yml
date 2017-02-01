@@ -19,16 +19,26 @@ spring:
     thymeleaf:
         mode: XHTML
     session:
-      store-type: none
+      store-type: hash_map
     data:
         mongodb:
             uri: mongodb://localhost:27017
             database: thingcare
-
-
-security:
-    basic:
-        enabled: true
+keycloak:
+    realm: thingcare
+    realmKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp2NXddNYhuAH0lhpS81I8sPQ9vErPrZO01B8VVnTOderI8WUPHnpI6xkeUq3sX9oIN6TNGEzPO8FeXuo6BYjpxdWwfzHlx+TVhbpeR/ulgxylpHgSlWOb+fRfI1I0XvZRqmzjOHPrbiJMZPU3WM03+HlNT6AtmglsockodaHiN77utcE5JW8uz8wR63K2OtknG1rNJ+hiT4JCdcS0JPKmqdn+jVYRapURCYfEw400rYKdZdFRsuU7vbePdidg3nL8eA1gXYJxwJZTCDRHmdEPxkCjXWt4PNqw1FZoQbs8MyKnvozFBEOmAWCdtdCOySW53XPdyN0A27bNAq7iw/nOQIDAQAB
+    auth-server-url: ${KEYCLOAK_SERVER_URL}
+    ssl-required: external
+    resource: thingcare-be
+    bearer-only: true
+    credentials:
+      secret: ${KEYCLOAK_SECRET}
+    securityConstraints[0]:
+      securityCollections[0]:
+        name: secured api
+        authRoles[0]: admin
+        authRoles[1]: manager
+        patterns[0]: /api/*
 
 thingcare:
     async:

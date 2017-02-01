@@ -30,6 +30,7 @@
         <commons-lang.version>3.5</commons-lang.version>
         <lombok.version>1.16.12</lombok.version>
         <axon.version>3.0.1</axon.version>
+        <keycloak.version>2.5.1.Final</keycloak.version>
         <mapstruct.version>1.1.0.Final</mapstruct.version>
         <groovy.version>2.4.8</groovy.version>
         <junit.version>4.12</junit.version>
@@ -55,10 +56,6 @@
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session</artifactId>
         </dependency>
@@ -68,8 +65,9 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-data</artifactId>
+            <artifactId>spring-security-web</artifactId>
         </dependency>
+
 
         <!--COMMONS-->
         <dependency>
@@ -104,6 +102,16 @@
         </dependency>
         <!--OTHERS-->
 
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-tomcat8-adapter</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-adapter</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
 
         <!--TEST-->
         <dependency>
